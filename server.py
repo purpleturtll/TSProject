@@ -127,8 +127,8 @@ class MyTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 
-HOST, PORT = "192.168.137.1", 8080
-# HOST, PORT = "127.0.0.1", 8080
+#HOST, PORT = "192.168.137.1", 8080
+HOST, PORT = "127.0.0.1", 8080
 
 server = MyTCPServer((HOST, PORT), Handler)
 
