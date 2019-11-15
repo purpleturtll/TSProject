@@ -20,10 +20,12 @@ import socketserver
 import math
 import time
 import threading
+import os
 
 SOCKETS = {}
 OPERATIONS = {}
 SESSION_ID = 1
+OPERATION_ID = 1
 
 
 class Operation:
@@ -31,6 +33,9 @@ class Operation:
         self.query = data
         self.result = result
         self.id = id
+        global OPERATION_ID
+        self.server_id = OPERATION_ID
+        OPERATION_ID += 1
 
     def __str__(self):
         return self.query[0][3:] + " " + self.query[4][3:] + " " + self.query[5][3:] + " " + self.result
@@ -57,7 +62,7 @@ class Handler(socketserver.BaseRequestHandler):
         return int(x1)/int(x2)
 
     def historia(self, x1):
-        print(OPERATIONS[SOCKETS[self.request][0]])
+        # print(OPERATIONS[SOCKETS[self.request][0]])
         if x1 != "":
             if int(x1) in OPERATIONS[SOCKETS[self.request][0]].keys():
                 return str(OPERATIONS[SOCKETS[self.request][0]][int(x1)])
@@ -91,7 +96,7 @@ class Handler(socketserver.BaseRequestHandler):
                 break
             data = data.decode("utf-8")
             data = data.split("$")
-            print(data)
+            # print(data)
 
             if data[2][3:] != str(SOCKETS[self.request][0]):
                 status = 1
@@ -127,8 +132,8 @@ class MyTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 
-HOST, PORT = "192.168.137.1", 8080
-# HOST, PORT = "127.0.0.1", 8080
+# HOST, PORT = "192.168.137.1", 8080
+HOST, PORT = "127.0.0.1", 8080
 
 server = MyTCPServer((HOST, PORT), Handler)
 
@@ -138,4 +143,34 @@ with server:
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
-    time.sleep(math.pow(10, 6))
+    while True:
+        os.system("cls")
+        print("0. WYJDZ")
+        print("1. PEŁNA HISTORIA")
+        print("2. HISTORIA PO ID SESJI")
+        print("3. HISTORIA PO ID OPERACJI")
+        choice = input()
+        os.system("cls")
+        if choice == "0":
+            break
+        if choice == "1":
+            for id, operacje in OPERATIONS.items():
+                for n, operacja in operacje.items():
+                    print(operacja)
+        if choice == "2":
+            os.system("cls")
+            print("PODAJ ID SESJI: ", end="")
+            sess_id = int(input())
+            for i in range(len(OPERATIONS)):
+                if sess_id == i + 1:
+                    for n, operacja in OPERATIONS[i + 1].items():
+                        print(operacja)
+        if choice == "3":
+            os.system("cls")
+            print("PODAJ ID OPERACJI: ", end="")
+            op_id = int(input())
+            for i in range(len(OPERATIONS)):
+                for n, operacja in OPERATIONS[i + 1].items():
+                    if operacja.server_id == op_id:
+                        print(operacja)
+        input()

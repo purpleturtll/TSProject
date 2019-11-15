@@ -23,10 +23,11 @@ import time
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-client.connect(("192.168.137.1", 8080))
-# client.connect(("127.0.0.1", 8080))
+# client.connect(("192.168.137.1", 8080))
+client.connect(("127.0.0.1", 8080))
 
 client.setblocking(True)
+
 
 def menu():
     print("OPERACJE:")
@@ -83,7 +84,7 @@ def dzielenie():
 
 
 def całaHis():
-    a, b ="", ""
+    a, b = "", ""
     return a, b
 
 
@@ -91,36 +92,27 @@ def HistID():
     print("PODAJ ID: ", end=" ")
     a = input()
     b = ""
-    return a, b    
-
+    return a, b
 
 
 def param(operacja):
-  #  os.system('cls')
-
+    # os.system('cls')
     if operacja == '1' or operacja == '2':
         return pods_wykl()
-
     if operacja == '3' or operacja == '4':
         return dodaw_odejm()
-
     if operacja == '5':
         return mnożenie()
-
     if operacja == '6':
         return dzielenie()
-
     if operacja == '7':
         return całaHis()
-
     if operacja == '8':
         return HistID()
 
 
-
 def na_String(operacja):
     if operacja == '1':
-
         operacja = "poteguj"
     if operacja == '2':
         operacja = "logarytmuj"
@@ -134,7 +126,6 @@ def na_String(operacja):
         operacja = "dziel"
     if operacja == '7' or operacja == '8':
         operacja = "historia"
-
     return operacja
 
 
@@ -147,9 +138,11 @@ def dane(operacja, a1, a2):
     msg += "A2=" + a2 + "$"
     return msg
 
+
 def dzielOdp(res):
     wynik = res[-2][3:]
     return wynik
+
 
 def historiaOgolna(res):
     data = res[6][3:].split(";")
@@ -164,10 +157,10 @@ def historiaOgolna(res):
 
 def historiaID(res):
     res = res.split(" ")
-    print("OPERACJA: "+ res[0][3:])
-    print("ARGUMENT NR 1: "+ res[1])
-    print("ARGUMENT NR 2: "+ res[2])
-    print("WYNIK: "+ res[3])
+    print("OPERACJA: " + res[0][3:])
+    print("ARGUMENT NR 1: " + res[1])
+    print("ARGUMENT NR 2: " + res[2])
+    print("WYNIK: " + res[3])
 
 
 SESSION_ID = client.recv(1024).decode("utf-8")
@@ -177,7 +170,7 @@ while True:
     operacja = '0'
     while int(operacja) > 9 or int(operacja) < 1:
         operacja = input()
-        if int(operacja) > 9 or int(operacja) < 1: 
+        if int(operacja) > 9 or int(operacja) < 1:
             print("NIEPOPRAWNY NUMER OPERACJI")
             input()
             os.system('cls')
@@ -198,9 +191,9 @@ while True:
     res = res.split("$")
     if res[0][3:] != "historia":
         wynik = dzielOdp(res)
-        print("WYNIK = "+ wynik)
+        print("WYNIK = " + wynik)
     else:
-        if(res[4][3:] ==""):
+        if(res[4][3:] == ""):
             historiaOgolna(res)
         else:
             historiaID(res[6])
