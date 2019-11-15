@@ -293,4 +293,3 @@ while True:
             historiaID(res[6])
     input()
     os.system('cls')
-    
