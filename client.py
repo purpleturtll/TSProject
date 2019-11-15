@@ -45,41 +45,108 @@ def menu():
 
 
 def pods_wykl():
-    print("PODAJ PODSTAWĘ:", end=" ")
-    a = input()
-    print("PODAJ WYKŁADNIK:", end=" ")
-    b = input()
+    while True:
+        try:
+            print("PODAJ PODSTAWĘ:", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break 
+        
+    while True:
+        try:
+            print("PODAJ WYKŁADNIK:", end=" ")
+            b = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break 
+    
+    a = str(a)
+    b = str(b)
     return a, b
 
 
 def dodaw_odejm():
-    print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
-    a = input()
-    print("PODAJ DRUGĄ LICZBĘ:", end=" ")
-    b = input()
-    return a, b
+    while True:
+        try:
+            print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break 
+
+    while True:
+        try:
+            print("PODAJ DRUGĄ LICZBĘ:", end=" ")
+            b = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break
+
+    a = str(a) 
+    b = str(b)
+    return a, b 
 
 
 def mnożenie():
-    print("PODAJ PIERWSZY CZYNNIK:", end=" ")
-    a = input()
-    print("PODAJ DRUGI CZYNNIK:", end=" ")
-    b = input()
+    while True:
+        try:
+            print("PODAJ PIERWSZY CZYNNIK:", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break
+    while True:
+        try:
+            print("PODAJ DRUGI CZYNNIK:", end=" ")
+            b = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            break
+    
+    a = str(a)
+    b = str(b)
     return a, b
 
 
 def dzielenie():
-    print("PODAJ DZIELNĄ:", end=" ")
-    a = input()
-    print("PODAJ DZIELNIK:", end=" ")
-
     while True:
-        b = input()
-        if(b == '0'):
-            print("DZIELNIK NIE MOŻE BYĆ ZEREM")
-            print("PODAJ POPRAWNY DZIELNIK:", end=" ")
+        try:
+            print("PODAJ DZIELNĄ:", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
         else:
             break
+    while True:
+        try:
+            print("PODAJ DZIELNIK:", end=" ")
+            b = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            continue
+        else:
+            b = str(b)
+            if b == '0':
+                print("DZIELNIK NIE MOŻE BYĆ ZEREM")
+            else:
+                break
+    
+    a = str(a)
+    b = str(b)
     return a, b
 
 
@@ -89,11 +156,18 @@ def całaHis():
 
 
 def HistID():
-    print("PODAJ ID: ", end=" ")
-    a = input()
+    while True:
+        try:
+            print("PODAJ ID: ", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ TO NIE ID")
+            continue
+        else:
+            break
+    a = str(a)
     b = ""
     return a, b
-
 
 def param(operacja):
     # os.system('cls')
@@ -144,23 +218,43 @@ def dzielOdp(res):
     return wynik
 
 
+def operWBezokoliczniku(res):
+    oper = res
+    if oper =="poteguj":     
+        oper = "POTĘGOWANIE"
+    if oper =="logarytmuj":
+        oper = "LOGARYTMOWANIE"
+    if oper =="dodaj":
+        oper = "DODAWANIE"
+    if oper =="odejmij":
+        oper = "ODEJMOWANIE"
+    if oper == "mnoz":
+        oper = "MNOŻENIE"
+    if oper == "dziel":
+        oper = "DZIELENIE"
+    return oper
+
+
 def historiaOgolna(res):
     data = res[6][3:].split(";")
     for i in range(len(data)):
         data[i] = data[i].split(" ")
     for i in range(len(data)):
-        print(str(i+1) + "." + data[i][0])
-        print("Argument nr 1: " + data[i][1])
-        print("Argument nr 2: " + data[i][2])
-        print("Wynik: " + data[i][3])
-
+        oper = operWBezokoliczniku(data[i][0])
+        print()
+        print(str(i+1) + "." + oper)
+        print("ARGUMENT NR 1: " + data[i][1])
+        print("ARGUMENT NR 2: " + data[i][2])
+        print("WYNIK: " + data[i][3])
+ 
 
 def historiaID(res):
     res = res.split(" ")
-    print("OPERACJA: " + res[0][3:])
-    print("ARGUMENT NR 1: " + res[1])
-    print("ARGUMENT NR 2: " + res[2])
-    print("WYNIK: " + res[3])
+    oper = operWBezokoliczniku(res[0][3:])
+    print("OPERACJA: "+ oper)
+    print("ARGUMENT NR 1: "+ res[1])
+    print("ARGUMENT NR 2: "+ res[2])
+    print("WYNIK: "+ res[3])
 
 
 SESSION_ID = client.recv(1024).decode("utf-8")
@@ -199,3 +293,4 @@ while True:
             historiaID(res[6])
     input()
     os.system('cls')
+    
