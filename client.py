@@ -53,8 +53,8 @@ def pods_wykl():
             print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
             continue
         else:
-            break 
-        
+            break
+
     while True:
         try:
             print("PODAJ WYKŁADNIK:", end=" ")
@@ -63,8 +63,8 @@ def pods_wykl():
             print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
             continue
         else:
-            break 
-    
+            break
+
     a = str(a)
     b = str(b)
     return a, b
@@ -79,7 +79,7 @@ def dodaw_odejm():
             print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
             continue
         else:
-            break 
+            break
 
     while True:
         try:
@@ -91,9 +91,9 @@ def dodaw_odejm():
         else:
             break
 
-    a = str(a) 
+    a = str(a)
     b = str(b)
-    return a, b 
+    return a, b
 
 
 def mnożenie():
@@ -115,7 +115,7 @@ def mnożenie():
             continue
         else:
             break
-    
+
     a = str(a)
     b = str(b)
     return a, b
@@ -144,7 +144,7 @@ def dzielenie():
                 print("DZIELNIK NIE MOŻE BYĆ ZEREM")
             else:
                 break
-    
+
     a = str(a)
     b = str(b)
     return a, b
@@ -168,6 +168,7 @@ def HistID():
     a = str(a)
     b = ""
     return a, b
+
 
 def param(operacja):
     # os.system('cls')
@@ -220,13 +221,13 @@ def dzielOdp(res):
 
 def operWBezokoliczniku(res):
     oper = res
-    if oper =="poteguj":     
+    if oper == "poteguj":
         oper = "POTĘGOWANIE"
-    if oper =="logarytmuj":
+    if oper == "logarytmuj":
         oper = "LOGARYTMOWANIE"
-    if oper =="dodaj":
+    if oper == "dodaj":
         oper = "DODAWANIE"
-    if oper =="odejmij":
+    if oper == "odejmij":
         oper = "ODEJMOWANIE"
     if oper == "mnoz":
         oper = "MNOŻENIE"
@@ -246,15 +247,15 @@ def historiaOgolna(res):
         print("ARGUMENT NR 1: " + data[i][1])
         print("ARGUMENT NR 2: " + data[i][2])
         print("WYNIK: " + data[i][3])
- 
+
 
 def historiaID(res):
     res = res.split(" ")
     oper = operWBezokoliczniku(res[0][3:])
-    print("OPERACJA: "+ oper)
-    print("ARGUMENT NR 1: "+ res[1])
-    print("ARGUMENT NR 2: "+ res[2])
-    print("WYNIK: "+ res[3])
+    print("OPERACJA: " + oper)
+    print("ARGUMENT NR 1: " + res[1])
+    print("ARGUMENT NR 2: " + res[2])
+    print("WYNIK: " + res[3])
 
 
 SESSION_ID = client.recv(1024).decode("utf-8")
