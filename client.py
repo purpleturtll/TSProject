@@ -50,7 +50,7 @@ def pods_wykl():
             print("PODAJ PODSTAWĘ:", end=" ")
             a = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -60,10 +60,40 @@ def pods_wykl():
             print("PODAJ WYKŁADNIK:", end=" ")
             b = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
+
+    a = str(a)
+    b = str(b)
+    return a, b
+
+
+def pods_wykl_log():
+    while True:
+        try:
+            print("PODAJ PODSTAWĘ:", end=" ")
+            a = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+            continue
+        else:
+            break
+
+    while True:
+        try:
+            print("PODAJ WYKŁADNIK:", end=" ")
+            b = int(input())
+        except ValueError:
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+            continue
+        else:
+            b = str(b)
+            if b == '0':
+                print("DZIELNIK NIE MOŻE BYĆ ZEREM")
+            else:
+                break
 
     a = str(a)
     b = str(b)
@@ -76,7 +106,7 @@ def dodaw_odejm():
             print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
             a = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -86,7 +116,7 @@ def dodaw_odejm():
             print("PODAJ DRUGĄ LICZBĘ:", end=" ")
             b = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -102,7 +132,7 @@ def mnożenie():
             print("PODAJ PIERWSZY CZYNNIK:", end=" ")
             a = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -111,7 +141,7 @@ def mnożenie():
             print("PODAJ DRUGI CZYNNIK:", end=" ")
             b = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -127,7 +157,7 @@ def dzielenie():
             print("PODAJ DZIELNĄ:", end=" ")
             a = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             break
@@ -136,7 +166,7 @@ def dzielenie():
             print("PODAJ DZIELNIK:", end=" ")
             b = int(input())
         except ValueError:
-            print("PODANA WARTOŚĆ NIE JEST LICZBĄ")
+            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
             continue
         else:
             b = str(b)
@@ -172,8 +202,10 @@ def HistID():
 
 def param(operacja):
     # os.system('cls')
-    if operacja == '1' or operacja == '2':
+    if operacja == '1':
         return pods_wykl()
+    if operacja == '2':
+        return pods_wykl_log()
     if operacja == '3' or operacja == '4':
         return dodaw_odejm()
     if operacja == '5':
@@ -242,29 +274,36 @@ def historiaOgolna(res):
         data[i] = data[i].split(" ")
     for i in range(len(data)):
         oper = operWBezokoliczniku(data[i][0])
-        print()
-        print(str(i+1) + "." + oper)
+        print("ID: " + str(i+1))
+        print("OPERACJA: " + oper)
         print("ARGUMENT NR 1: " + data[i][1])
         print("ARGUMENT NR 2: " + data[i][2])
-        print("WYNIK: " + data[i][3])
+        print("WYNIK: " + data[i][3], end="\n\n")
 
 
 def historiaID(res):
     res = res.split(" ")
-    oper = operWBezokoliczniku(res[0][3:])
-    print("OPERACJA: " + oper)
-    print("ARGUMENT NR 1: " + res[1])
-    print("ARGUMENT NR 2: " + res[2])
-    print("WYNIK: " + res[3])
+    if len(res) > 1:
+        oper = operWBezokoliczniku(res[0][3:])
+        os.system("cls")
+        print("OPERACJA: " + oper)
+        print("ARGUMENT NR 1: " + res[1])
+        print("ARGUMENT NR 2: " + res[2])
+        print("WYNIK: " + res[3])
 
 
 SESSION_ID = client.recv(1024).decode("utf-8")
 
 while True:
+    os.system("cls")
+    print("TWOJE ID: ", SESSION_ID, end='\n\n')
     menu()
     operacja = '0'
     while int(operacja) > 9 or int(operacja) < 1:
         operacja = input()
+        if operacja == '':
+            operacja = '0'
+            continue
         if int(operacja) > 9 or int(operacja) < 1:
             print("NIEPOPRAWNY NUMER OPERACJI")
             input()

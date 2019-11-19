@@ -28,6 +28,23 @@ SESSION_ID = 1
 OPERATION_ID = 1
 
 
+def operWBezokoliczniku(res):
+    oper = res
+    if oper == "poteguj":
+        oper = "POTĘGOWANIE"
+    if oper == "logarytmuj":
+        oper = "LOGARYTMOWANIE"
+    if oper == "dodaj":
+        oper = "DODAWANIE"
+    if oper == "odejmij":
+        oper = "ODEJMOWANIE"
+    if oper == "mnoz":
+        oper = "MNOŻENIE"
+    if oper == "dziel":
+        oper = "DZIELENIE"
+    return oper
+
+
 class Operation:
     def __init__(self, id, data, result):
         self.query = data
@@ -36,6 +53,14 @@ class Operation:
         global OPERATION_ID
         self.server_id = OPERATION_ID
         OPERATION_ID += 1
+
+    def pretty(self):
+        print("ID_SERVER: " + str(self.server_id))
+        print("ID_USER: " + str(self.id))
+        print("OPERACJA: " + operWBezokoliczniku(str(self.query[0][3:])))
+        print("ARGUMENT NR 1: " + str(self.query[4][3:]))
+        print("ARGUMENT NR 2: " + str(self.query[5][3:]))
+        print("WYNIK: " + str(self.result), end="\n\n")
 
     def __str__(self):
         return self.query[0][3:] + " " + self.query[4][3:] + " " + self.query[5][3:] + " " + self.result
@@ -156,21 +181,31 @@ with server:
         if choice == "1":
             for id, operacje in OPERATIONS.items():
                 for n, operacja in operacje.items():
-                    print(operacja)
+                    operacja.pretty()
+                    print()
         if choice == "2":
-            os.system("cls")
             print("PODAJ ID SESJI: ", end="")
-            sess_id = int(input())
-            for i in range(len(OPERATIONS)):
-                if sess_id == i + 1:
-                    for n, operacja in OPERATIONS[i + 1].items():
-                        print(operacja)
+            sess_id = input()
+            try:
+                sess_id = int(sess_id)
+            except ValueError:
+                continue
+
+            for id, operacje in OPERATIONS.items():
+                if id == sess_id:
+                    for n, operacja in operacje.items():
+                        operacja.pretty()
+                        print()
         if choice == "3":
-            os.system("cls")
             print("PODAJ ID OPERACJI: ", end="")
-            op_id = int(input())
+            op_id = input()
+            try:
+                op_id = int(op_id)
+            except ValueError:
+                continue
             for i in range(len(OPERATIONS)):
                 for n, operacja in OPERATIONS[i + 1].items():
                     if operacja.server_id == op_id:
-                        print(operacja)
+                        operacja.pretty()
+                        print()
         input()
