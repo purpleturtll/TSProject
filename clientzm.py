@@ -73,7 +73,7 @@ def pods_wykl():
 def pods_wykl_log():
     while True:
         try:
-            print("PODAJ PODSTAWĘ:", end=" ")
+            print("PODAJ LICZBĘ:", end=" ")
             a = float(input())
         except ValueError:
             print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ ZMIENNOPRZECINKOWĄ")
@@ -81,13 +81,13 @@ def pods_wykl_log():
         else:
             a = str(a)
             if a == '0.0' or a == '-0.0':
-                print("PODSTAWA NIE MOŻE BYĆ ZEREM")
+                print("LICZBA NIE MOŻE BYĆ ZEREM")
             else:
                 break
 
     while True:
         try:
-            print("PODAJ WYKŁADNIK:", end=" ")
+            print("PODAJ PODSTAWĘ:", end=" ")
             b = float(input())
         except ValueError:
             print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ ZMIENNOPRZECINKOWĄ")
@@ -95,7 +95,7 @@ def pods_wykl_log():
         else:
             b = str(b)
             if b == '0.0' or b == '1.0' or b == '-1.0' or b == '-0.0':
-                print("WYKŁANDIK NIE MOŻE BYĆ ZEREM ANI JEDYNKĄ")
+                print("PODSTAWA NIE MOŻE BYĆ ZEREM ANI JEDYNKĄ")
             else:
                 break
 
