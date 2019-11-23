@@ -253,7 +253,7 @@ while True:
     print("TWOJE ID: ", SESSION_ID, end='\n\n')
     menu()
     operacja = '-1'
-    while int(operacja) > 9 or int(operacja) < 1:
+    while int(operacja) > 8 or int(operacja) < 0:
         operacja = input()
         if operacja == '':
             operacja = '-1'
