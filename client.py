@@ -39,144 +39,98 @@ def menu():
     print("6 - DZIELENIE")
     print("7 - PEŁNA HISTORIA")
     print("8 - HISTORIA PO ID")
-    print("9 - WYJDŹ")
+    print("0 - WYJDŹ")
     print()
     print("WYBIERZ NUMER OPERACJI:", end=" ")
 
 
 def pods_wykl():
     while True:
-        try:
-            print("PODAJ PODSTAWĘ:", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ PODSTAWĘ:", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
-
     while True:
-        try:
-            print("PODAJ WYKŁADNIK:", end=" ")
-            b = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ WYKŁADNIK:", end=" ")
+        b = input()
+        if b == '':
             continue
         else:
             break
-
-    a = str(a)
-    b = str(b)
     return a, b
 
 
 def pods_wykl_log():
     while True:
-        try:
-            print("PODAJ PODSTAWĘ:", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ LICZBĘ:", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
-
     while True:
-        try:
-            print("PODAJ WYKŁADNIK:", end=" ")
-            b = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ PODSTAWĘ:", end=" ")
+        b = input()
+        if b == '':
             continue
         else:
-            b = str(b)
-            if b == '0':
-                print("DZIELNIK NIE MOŻE BYĆ ZEREM")
-            else:
-                break
-
-    a = str(a)
-    b = str(b)
+            break
     return a, b
 
 
 def dodaw_odejm():
     while True:
-        try:
-            print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
-
     while True:
-        try:
-            print("PODAJ DRUGĄ LICZBĘ:", end=" ")
-            b = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ DRUGĄ LICZBĘ:", end=" ")
+        b = input()
+        if b == '':
             continue
         else:
             break
-
-    a = str(a)
-    b = str(b)
     return a, b
 
 
 def mnożenie():
     while True:
-        try:
-            print("PODAJ PIERWSZY CZYNNIK:", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ PIERWSZY CZYNNIK:", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
     while True:
-        try:
-            print("PODAJ DRUGI CZYNNIK:", end=" ")
-            b = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ DRUGI CZYNNIK:", end=" ")
+        b = input()
+        if b == '':
             continue
         else:
             break
-
-    a = str(a)
-    b = str(b)
     return a, b
 
 
 def dzielenie():
     while True:
-        try:
-            print("PODAJ DZIELNĄ:", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ DZIELNĄ:", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
     while True:
-        try:
-            print("PODAJ DZIELNIK:", end=" ")
-            b = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ MUSI BYĆ LICZBĄ CAŁKOWITĄ")
+        print("PODAJ DZIELNIK:", end=" ")
+        b = input()
+        if b == '':
             continue
         else:
-            b = str(b)
-            if b == '0':
-                print("DZIELNIK NIE MOŻE BYĆ ZEREM")
-            else:
-                break
-
-    a = str(a)
-    b = str(b)
+            break
     return a, b
 
 
@@ -187,11 +141,9 @@ def całaHis():
 
 def HistID():
     while True:
-        try:
-            print("PODAJ ID: ", end=" ")
-            a = int(input())
-        except ValueError:
-            print("PODANA WARTOŚĆ TO NIE ID")
+        print("PODAJ ID: ", end=" ")
+        a = input()
+        if a == '':
             continue
         else:
             break
@@ -241,14 +193,11 @@ def dane(operacja, a1, a2):
     msg += "ST=" + str(0) + "$"
     msg += "ID=" + SESSION_ID + "$"
     msg += "TS=" + time.asctime(time.localtime(time.time())) + "$"
-    msg += "A1=" + a1 + "$"
-    msg += "A2=" + a2 + "$"
+    if a1 != "":
+        msg += "A1=" + a1 + "$"
+    if a2 != "":
+        msg += "A2=" + a2 + "$"
     return msg
-
-
-def dzielOdp(res):
-    wynik = res[-2][3:]
-    return wynik
 
 
 def operWBezokoliczniku(res):
@@ -268,50 +217,55 @@ def operWBezokoliczniku(res):
     return oper
 
 
-def historiaOgolna(res):
-    data = res[6][3:].split(";")
-    for i in range(len(data)):
-        data[i] = data[i].split(" ")
-    for i in range(len(data)):
-        oper = operWBezokoliczniku(data[i][0])
-        print("ID: " + str(i+1))
+def historia(data):
+    while data[1][3:] != "OK":
+        oper = operWBezokoliczniku(data[0][3:])
+        print("\nID: " + data[8][3:])
         print("OPERACJA: " + oper)
-        print("ARGUMENT NR 1: " + data[i][1])
-        print("ARGUMENT NR 2: " + data[i][2])
-        print("WYNIK: " + data[i][3], end="\n\n")
+        print("ARGUMENT NR 1: " + data[4][3:])
+        print("ARGUMENT NR 2: " + data[5][3:])
+        print("STATUS: " + data[7][3:])
+        print("WYNIK: " + data[6][3:], end="\n")
+        client.send(("OP=ack$ST=OK$ID=" + SESSION_ID + "$TS=" +
+                     time.asctime(time.localtime(time.time())) + "$").encode("utf-8"))
+        data = client.recv(1024)
+        data = data.decode("utf-8").split("$")
+    oper = operWBezokoliczniku(data[0][3:])
+    print("\nID: " + data[8][3:])
+    print("OPERACJA: " + oper)
+    print("ARGUMENT NR 1: " + data[4][3:])
+    print("ARGUMENT NR 2: " + data[5][3:])
+    print("STATUS: " + data[7][3:])
+    print("WYNIK: " + data[6][3:], end="\n")
 
 
-def historiaID(res):
-    res = res.split(" ")
-    if len(res) > 1:
-        oper = operWBezokoliczniku(res[0][3:])
-        os.system("cls")
-        print("OPERACJA: " + oper)
-        print("ARGUMENT NR 1: " + res[1])
-        print("ARGUMENT NR 2: " + res[2])
-        print("WYNIK: " + res[3])
+SESSION_ID = client.recv(1024).decode("utf-8").split("$")[2][3:]
 
 
-SESSION_ID = client.recv(1024).decode("utf-8")
+def handleOpResult(data):
+    print("WYNIK = " + data[3][3:])
+    if data[0][3:] != "OK":
+        print("STATUS: " + data[0][3:])
+
 
 while True:
     os.system("cls")
     print("TWOJE ID: ", SESSION_ID, end='\n\n')
     menu()
-    operacja = '0'
+    operacja = '-1'
     while int(operacja) > 9 or int(operacja) < 1:
         operacja = input()
         if operacja == '':
-            operacja = '0'
+            operacja = '-1'
             continue
-        if int(operacja) > 9 or int(operacja) < 1:
+        if int(operacja) > 8 or int(operacja) < 0:
             print("NIEPOPRAWNY NUMER OPERACJI")
             input()
             os.system('cls')
             menu()
         else:
             break
-    if operacja == '9':
+    if operacja == '0':
         client.close()
         print()
         break
@@ -323,13 +277,11 @@ while True:
     res = client.recv(1024)
     res = res.decode("utf-8")
     res = res.split("$")
-    if res[0][3:] != "historia":
-        wynik = dzielOdp(res)
-        print("WYNIK = " + wynik)
+    if len(res) == 5:
+        handleOpResult(res)
     else:
-        if(res[4][3:] == ""):
-            historiaOgolna(res)
-        else:
-            historiaID(res[6])
+        if(res[1][3:] != "PUSTA"):
+            historia(res)
+
     input()
     os.system('cls')
