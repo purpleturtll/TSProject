@@ -1,8 +1,8 @@
 """
 
 Nagłówek:
-Pole           -> |Pole Operacji|Pole Statusu|Pole Identyfikatora Sesji|  Timestamp  |Arg1 | Arg2 |
-Klucz          -> |      OP     |     ST     |           ID            |      TS     | A1  |  A2  |
+Pole           -> |Pole Operacji|Pole Identyfikatora Sesji|  Timestamp  |Arg1 | Arg2 |
+Klucz          -> |      OP     |           ID            |      TS     | A1  |  A2  |
 
 
 Operacje:
@@ -190,9 +190,8 @@ def na_String(operacja):
 
 def dane(operacja, a1, a2):
     msg = "OP=" + operacja + "$"
-    msg += "ST=" + str(0) + "$"
     msg += "ID=" + SESSION_ID + "$"
-    msg += "TS=" + time.asctime(time.localtime(time.time())) + "$"
+    msg += "TS=" + str(time.time()) + "$"
     if a1 != "":
         msg += "A1=" + a1 + "$"
     if a2 != "":
@@ -218,7 +217,26 @@ def operWBezokoliczniku(res):
 
 
 def historia(data):
-    while data[1][3:] != "OK":
+    if data[1][3:] == "PUSTA":
+        print("\nID: ")
+        print("OPERACJA: ")
+        print("ARGUMENT NR 1: ")
+        print("ARGUMENT NR 2: ")
+        print("STATUS: PUSTA")
+        print("WYNIK: ")
+    else:
+        while data[1][3:] != "OK":
+            oper = operWBezokoliczniku(data[0][3:])
+            print("\nID: " + data[8][3:])
+            print("OPERACJA: " + oper)
+            print("ARGUMENT NR 1: " + data[4][3:])
+            print("ARGUMENT NR 2: " + data[5][3:])
+            print("STATUS: " + data[7][3:])
+            print("WYNIK: " + data[6][3:], end="\n")
+            client.send(("OP=ack$ID=" + SESSION_ID + "$TS=" +
+                         str(time.time()) + "$").encode("utf-8"))
+            data = client.recv(1024)
+            data = data.decode("utf-8").split("$")
         oper = operWBezokoliczniku(data[0][3:])
         print("\nID: " + data[8][3:])
         print("OPERACJA: " + oper)
@@ -226,17 +244,6 @@ def historia(data):
         print("ARGUMENT NR 2: " + data[5][3:])
         print("STATUS: " + data[7][3:])
         print("WYNIK: " + data[6][3:], end="\n")
-        client.send(("OP=ack$ST=OK$ID=" + SESSION_ID + "$TS=" +
-                     time.asctime(time.localtime(time.time())) + "$").encode("utf-8"))
-        data = client.recv(1024)
-        data = data.decode("utf-8").split("$")
-    oper = operWBezokoliczniku(data[0][3:])
-    print("\nID: " + data[8][3:])
-    print("OPERACJA: " + oper)
-    print("ARGUMENT NR 1: " + data[4][3:])
-    print("ARGUMENT NR 2: " + data[5][3:])
-    print("STATUS: " + data[7][3:])
-    print("WYNIK: " + data[6][3:], end="\n")
 
 
 SESSION_ID = client.recv(1024).decode("utf-8").split("$")[2][3:]
@@ -277,11 +284,10 @@ while True:
     res = client.recv(1024)
     res = res.decode("utf-8")
     res = res.split("$")
-    if len(res) == 5:
+    if len(res) == 5 and res[0][3:] != "historia":
         handleOpResult(res)
     else:
-        if(res[1][3:] != "PUSTA"):
-            historia(res)
+        historia(res)
 
     input()
     os.system('cls')
