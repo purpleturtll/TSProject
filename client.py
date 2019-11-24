@@ -31,9 +31,9 @@ client.setblocking(True)
 
 def menu():
     print("OPERACJE:")
-    print("1 - POTEGOWANIE")
+    print("1 - POTĘGOWANIE")
     print("2 - LOGARYTMOWANIE")
-    print("3 - DODAWANIE ")
+    print("3 - DODAWANIE")
     print("4 - ODEJMOWANIE")
     print("5 - MNOŻENIE")
     print("6 - DZIELENIE")
