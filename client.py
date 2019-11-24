@@ -28,6 +28,8 @@ client.connect(("127.0.0.1", 8080))
 
 client.setblocking(True)
 
+status = "OK"
+
 
 def menu():
     print("OPERACJE:")
@@ -190,6 +192,7 @@ def na_String(operacja):
 
 def dane(operacja, a1, a2):
     msg = "OP=" + operacja + "$"
+    msg += "ST=" + status + "$"
     msg += "ID=" + SESSION_ID + "$"
     msg += "TS=" + str(time.time()) + "$"
     if a1 != "":
@@ -233,7 +236,7 @@ def historia(data):
             print("ARGUMENT NR 2: " + data[5][3:])
             print("STATUS: " + data[7][3:])
             print("WYNIK: " + data[6][3:], end="\n")
-            client.send(("OP=ack$ID=" + SESSION_ID + "$TS=" +
+            client.send(("OP=history_ack$ST=OK$ID=" + SESSION_ID + "$TS=" +
                          str(time.time()) + "$").encode("utf-8"))
             data = client.recv(1024)
             data = data.decode("utf-8").split("$")
@@ -250,9 +253,9 @@ SESSION_ID = client.recv(1024).decode("utf-8").split("$")[2][3:]
 
 
 def handleOpResult(data):
-    print("WYNIK = " + data[3][3:])
-    if data[0][3:] != "OK":
-        print("STATUS: " + data[0][3:])
+    print("WYNIK = " + data[4][3:])
+    if data[1][3:] != "OK":
+        print("STATUS: " + data[1][3:])
 
 
 while True:
@@ -284,7 +287,7 @@ while True:
     res = client.recv(1024)
     res = res.decode("utf-8")
     res = res.split("$")
-    if len(res) == 5 and res[0][3:] != "historia":
+    if len(res) == 6 and res[0][3:] != "historia":
         handleOpResult(res)
     else:
         historia(res)

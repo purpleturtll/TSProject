@@ -63,13 +63,13 @@ class Operation:
         print("ID_USER: " + str(self.id))
         print("OPERACJA: " + operWBezokoliczniku(str(self.query[0][3:])))
         print("STATUS: " + self.status)
-        print("ARGUMENT NR 1: " + str(self.query[3][3:]))
-        print("ARGUMENT NR 2: " + str(self.query[4][3:]))
+        print("ARGUMENT NR 1: " + str(self.query[4][3:]))
+        print("ARGUMENT NR 2: " + str(self.query[5][3:]))
         print("WYNIK: " + str(self.result), end="\n\n")
 
     def __str__(self):
-        x = self.query[0][3:] + " " + self.query[3][3:] + \
-            " " + self.query[4][3:] + " " + self.result + \
+        x = self.query[0][3:] + " " + self.query[4][3:] + \
+            " " + self.query[5][3:] + " " + self.result + \
             " " + self.status + " " + str(self.id)
         return x
 
@@ -171,7 +171,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def historia(self, data):
-        if len(data) == 4:
+        if len(data) == 5:
             if len(OPERATIONS[SOCKETS[self.request][0]]) == 0:
                 self.request.send(("OP=historia$ST=PUSTA$ID=" + str(SOCKETS[self.request][0]) + "$TS=" +
                                    str(time.time()) + "$").encode("utf-8"))
@@ -190,10 +190,10 @@ class Handler(socketserver.BaseRequestHandler):
                     self.request.send(
                         bytes(self.dane(op[0], op[1], op[2], op[3], op[4], op[5]), "utf-8"))
         else:
-            if int(data[3][3:]) in OPERATIONS[SOCKETS[self.request][0]].keys():
+            if int(data[4][3:]) in OPERATIONS[SOCKETS[self.request][0]].keys():
                 self.status = "OK"
                 op = str(OPERATIONS[SOCKETS[self.request][0]]
-                         [int(data[3][3:])]).split(" ")
+                         [int(data[4][3:])]).split(" ")
                 self.request.send(
                     bytes(self.dane(op[0], op[1], op[2], op[3], op[4], op[5]), "utf-8"))
             else:
@@ -202,8 +202,7 @@ class Handler(socketserver.BaseRequestHandler):
 
     def dane(self, operacja, a1, a2, result, status="", id=0):
         msg = ""
-        if status != "":
-            msg += "OP=" + operacja + "$"
+        msg += "OP=" + operacja + "$"
         msg += "ST=" + self.status + "$"
         msg += "ID=" + str(SOCKETS[self.request][0]) + "$"
         msg += "TS=" + str(time.time()) + "$"
@@ -231,23 +230,23 @@ class Handler(socketserver.BaseRequestHandler):
             data = data.decode("utf-8")
             data = data.split("$")
 
-            if data[1][3:] != str(SOCKETS[self.request][0]):
+            if data[2][3:] != str(SOCKETS[self.request][0]):
                 self.status = "ZLA_SESJA"
             else:
                 self.status = "OK"
 
             if data[0][3:] == "poteguj":
-                result = str(self.potegowanie(data[3][3:], data[4][3:]))
+                result = str(self.potegowanie(data[4][3:], data[5][3:]))
             if data[0][3:] == "logarytmuj":
-                result = str(self.logarytmowanie(data[3][3:], data[4][3:]))
+                result = str(self.logarytmowanie(data[4][3:], data[5][3:]))
             if data[0][3:] == "dodaj":
-                result = str(self.dodawanie(data[3][3:], data[4][3:]))
+                result = str(self.dodawanie(data[4][3:], data[5][3:]))
             if data[0][3:] == "odejmij":
-                result = str(self.odejmowanie(data[3][3:], data[4][3:]))
+                result = str(self.odejmowanie(data[4][3:], data[5][3:]))
             if data[0][3:] == "mnoz":
-                result = str(self.mnozenie(data[3][3:], data[4][3:]))
+                result = str(self.mnozenie(data[4][3:], data[5][3:]))
             if data[0][3:] == "dziel":
-                result = str(self.dzielenie(data[3][3:], data[4][3:]))
+                result = str(self.dzielenie(data[4][3:], data[5][3:]))
 
             if data[0][3:] == "historia":
                 self.historia(data)
@@ -256,7 +255,7 @@ class Handler(socketserver.BaseRequestHandler):
                                                                                            data, result, self.status)
                 SOCKETS[self.request][1] += 1
                 self.request.send(
-                    bytes(self.dane(data[0][3:], data[3][3:], data[4][3:], result), "utf-8"))
+                    bytes(self.dane(data[0][3:], data[4][3:], data[5][3:], result), "utf-8"))
 
 
 class MyTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
