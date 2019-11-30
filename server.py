@@ -32,6 +32,8 @@ OPERATION_ID = 1
 
 
 def operWBezokoliczniku(res):
+    """Funkcja zamieniająca operację na formę bezokolicznika.
+    Używana przy wyświetlaniu."""
     oper = res
     if oper == "poteguj":
         oper = "POTĘGOWANIE"
@@ -49,6 +51,8 @@ def operWBezokoliczniku(res):
 
 
 class Operation:
+    """Klasa reprezentująca rekord w historii operacji"""
+
     def __init__(self, id, data, result, status):
         self.query = data
         self.result = result
@@ -59,6 +63,7 @@ class Operation:
         OPERATION_ID += 1
 
     def pretty(self):
+        """Funkcja która wypisuje informacje o zapisanej operacji"""
         print("ID_SERVER: " + str(self.server_id))
         print("ID_USER: " + str(self.id))
         print("OPERACJA: " + operWBezokoliczniku(str(self.query[0][3:])))
@@ -75,6 +80,9 @@ class Operation:
 
 
 class Handler(socketserver.BaseRequestHandler):
+    """Klasa do obsługi połączenia na gnieździe
+    Tworzona jest jedna instancja dla każdego przychodzącego połączenia"""
+
     def __init__(self, request, client_address, server):
         self.request = request
         self.client_address = client_address
@@ -87,6 +95,7 @@ class Handler(socketserver.BaseRequestHandler):
             self.finish()
 
     def potegowanie(self, x1, x2):
+        """Funkcja obsługująca operację potęgowania"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -105,6 +114,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def logarytmowanie(self, x1, x2):
+        """Funkcja obsługująca operację logarytmowania"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -123,6 +133,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def dodawanie(self, x1, x2):
+        """Funkcja obsługująca operację dodawania"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -134,6 +145,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def odejmowanie(self, x1, x2):
+        """Funkcja obsługująca operację odejmowania"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -145,6 +157,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def mnozenie(self, x1, x2):
+        """Funkcja obsługująca operację mnożenia"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -156,6 +169,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def dzielenie(self, x1, x2):
+        """Funkcja obsługująca operację dzielenia"""
         try:
             x1 = float(x1)
             x2 = float(x2)
@@ -171,6 +185,7 @@ class Handler(socketserver.BaseRequestHandler):
         return
 
     def historia(self, data):
+        """Funkcja obsługująca wysyłanie historii"""
         if len(data) == 5:
             if len(OPERATIONS[SOCKETS[self.request][0]]) == 0:
                 self.request.send(("OP=historia$ST=PUSTA$ID=" + str(SOCKETS[self.request][0]) + "$TS=" +
@@ -201,6 +216,7 @@ class Handler(socketserver.BaseRequestHandler):
                                    str(time.time()) + "$").encode("utf-8"))
 
     def dane(self, operacja, a1, a2, result, status="", id=0):
+        """Funkcja przygotowująca komunikat do wysłania"""
         msg = ""
         msg += "OP=" + operacja + "$"
         msg += "ST=" + self.status + "$"
@@ -217,24 +233,34 @@ class Handler(socketserver.BaseRequestHandler):
         return msg
 
     def handle(self):
+        """Funkcja obsługująca połączenie"""
         global SOCKETS, SESSION_ID, OPERATIONS
         SOCKETS[self.request] = [SESSION_ID, 1]
         OPERATIONS[SOCKETS[self.request][0]] = {}
         SESSION_ID += 1
+
+        # Wysłanie ID sesji do klienta
         self.request.send(("OP=id$ST=OK$ID=" + str(SOCKETS[self.request][0]) + "$TS=" +
                            str(time.time()) + "$").encode("utf-8"))
+
+        # Główna pętla obsługi połączenia
         while(True):
+            # Oczekiwanie na komunikat od klienta
             data = self.request.recv(1024)
             if not data:
                 break
+
+            # Dekodowanie i podzielenie komunikatu na pola
             data = data.decode("utf-8")
             data = data.split("$")
 
+            # Sprawdzenie zgodności ID sesji z komunikatu z gniazdem
             if data[2][3:] != str(SOCKETS[self.request][0]):
                 self.status = "ZLA_SESJA"
             else:
                 self.status = "OK"
 
+            # Wywołanie odpowiedniej funkcji na podstawie zawartości pola OP
             if data[0][3:] == "poteguj":
                 result = str(self.potegowanie(data[4][3:], data[5][3:]))
             if data[0][3:] == "logarytmuj":
@@ -249,27 +275,32 @@ class Handler(socketserver.BaseRequestHandler):
                 result = str(self.dzielenie(data[4][3:], data[5][3:]))
 
             if data[0][3:] == "historia":
+                # Odesłanie do klienta żądanej historii
                 self.historia(data)
             else:
+                # Dodanie operacji matematycznej do historii
                 OPERATIONS[SOCKETS[self.request][0]][SOCKETS[self.request][1]] = Operation(SOCKETS[self.request][1],
                                                                                            data, result, self.status)
                 SOCKETS[self.request][1] += 1
+                # Odesłanie wyniku operacji matematycznej
                 self.request.send(
                     bytes(self.dane(data[0][3:], data[4][3:], data[5][3:], result), "utf-8"))
 
 
 class MyTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    """Klasa pozwalająca na uruchomienie serwera na oddzielnym wątku"""
     pass
 
 
 server = MyTCPServer((HOST, PORT), Handler)
 
-# server.serve_forever()
-
 with server:
+    # Uruchomienie serwera
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
+
+    # Pętla dla interfejsu po stronie serwera
     while True:
         os.system("cls")
         print("0. WYJDŹ")
@@ -281,11 +312,13 @@ with server:
         if choice == "0":
             break
         if choice == "1":
+            # Wyświetlenie historii wszystkich operacji wykonanych na serwerze
             for id, operacje in OPERATIONS.items():
                 for n, operacja in operacje.items():
                     operacja.pretty()
                     print()
         if choice == "2":
+            # Wyświetlenie historii wszystkich operacji dla danego ID sesji
             print("PODAJ ID SESJI: ", end="")
             sess_id = input()
             try:
@@ -299,6 +332,7 @@ with server:
                         operacja.pretty()
                         print()
         if choice == "3":
+            # Wyświetlenie historii danej operacji
             print("PODAJ ID OPERACJI: ", end="")
             op_id = input()
             try:
