@@ -23,7 +23,7 @@ import time
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# client.connect(("192.168.137.1", 8080))
+#client.connect(("192.168.137.1", 8080))
 client.connect(("127.0.0.1", 8080))
 
 client.setblocking(True)
@@ -32,6 +32,7 @@ status = "OK"
 
 
 def menu():
+    """ Funkcja wyświetlająca menu główne"""
     print("OPERACJE:")
     print("1 - POTĘGOWANIE")
     print("2 - LOGARYTMOWANIE")
@@ -47,6 +48,7 @@ def menu():
 
 
 def pods_wykl():
+    """ Funkcja przyjmująca od użytkownika dane do operacji potegowania"""
     while True:
         print("PODAJ PODSTAWĘ:", end=" ")
         a = input()
@@ -65,6 +67,7 @@ def pods_wykl():
 
 
 def pods_wykl_log():
+    """ Funkcja przyjmująca od użytkownika dane do operacji logarytmowania"""
     while True:
         print("PODAJ LICZBĘ:", end=" ")
         a = input()
@@ -83,6 +86,7 @@ def pods_wykl_log():
 
 
 def dodaw_odejm():
+    """ Funkcja przyjmująca od użytkownika dane do wybranej wcześniej operacji - dodawania lub odejmowania """
     while True:
         print("PODAJ PIERWSZĄ LICZBĘ:", end=" ")
         a = input()
@@ -101,6 +105,7 @@ def dodaw_odejm():
 
 
 def mnożenie():
+    """ Funkcja przyjmująca od użytkownika dane do operacji mnożenia"""
     while True:
         print("PODAJ PIERWSZY CZYNNIK:", end=" ")
         a = input()
@@ -119,6 +124,7 @@ def mnożenie():
 
 
 def dzielenie():
+    """ Funkcja przyjmująca od użytkownika dane do operacji dzielenia"""
     while True:
         print("PODAJ DZIELNĄ:", end=" ")
         a = input()
@@ -137,11 +143,13 @@ def dzielenie():
 
 
 def całaHis():
+    """Funkcja obsługująca wyświetlanie pełnej historii operacji wykonanych przez danego użytkownika"""
     a, b = "", ""
     return a, b
 
 
 def HistID():
+    """Funkcja wczytująca od użytkownika numer ID operacji, którą chce wyświetlić z historii"""
     while True:
         print("PODAJ ID: ", end=" ")
         a = input()
@@ -155,6 +163,7 @@ def HistID():
 
 
 def param(operacja):
+    """ Funkcja wywołująca funkcję operacji, której odpowiada podana w argumencie cyfra """
     # os.system('cls')
     if operacja == '1':
         return pods_wykl()
@@ -173,6 +182,7 @@ def param(operacja):
 
 
 def na_String(operacja):
+    """ Zamiana danej lliczbowej podanej przez użytkownika na odpowiadającą jej wartość pola OP """
     if operacja == '1':
         operacja = "poteguj"
     if operacja == '2':
@@ -191,6 +201,7 @@ def na_String(operacja):
 
 
 def dane(operacja, a1, a2):
+    """ Funkcja łącząca dane w gotową do wysłania przez klienta wiadomość """
     msg = "OP=" + operacja + "$"
     msg += "ST=" + status + "$"
     msg += "ID=" + SESSION_ID + "$"
@@ -203,6 +214,8 @@ def dane(operacja, a1, a2):
 
 
 def operWBezokoliczniku(res):
+    """ Funkcja zmieniająca dane w zmiennej oper na jej odpowiednik w bezokoliczniku, 
+    używana podczas wyświetlania historii przez użytkownika"""
     oper = res
     if oper == "poteguj":
         oper = "POTĘGOWANIE"
@@ -220,6 +233,7 @@ def operWBezokoliczniku(res):
 
 
 def historia(data):
+    """Funkcja obsługująca wyświetlanie historii """
     if data[1][3:] == "PUSTA":
         print("\nID: ")
         print("OPERACJA: ")
@@ -249,20 +263,24 @@ def historia(data):
         print("WYNIK: " + data[6][3:], end="\n")
 
 
+# Odebranie komunikatu z ID sesji które przydzielił serwer
 SESSION_ID = client.recv(1024).decode("utf-8").split("$")[2][3:]
 
 
 def handleOpResult(data):
+    """Funkcja wyświetlająca wynik operacji przesłany przez serwer oraz jej status"""
     print("WYNIK = " + data[4][3:])
     if data[1][3:] != "OK":
         print("STATUS: " + data[1][3:])
 
 
+# Główna pętla do komunikacja z serwerem
 while True:
     os.system("cls")
     print("TWOJE ID: ", SESSION_ID, end='\n\n')
     menu()
     operacja = '-1'
+    # Pętla wyboru operacji przez klienta
     while int(operacja) > 8 or int(operacja) < 0:
         operacja = input()
         if operacja == '':
@@ -276,20 +294,29 @@ while True:
         else:
             break
     if operacja == '0':
+        # Zamknięcie połączenia
         client.close()
         print()
         break
     os.system('cls')
+    # Wczytanie parametrów dla wybranej operacji
     a, b = param(operacja)
     operacja = na_String(operacja)
+    # Przygotowanie komuninkatu do wysłania 
     msg = dane(operacja, a, b)
+    # Zakodowanie znaków w formacie UTF-8 i przesłanie go do serwera
     client.send(msg.encode("utf-8"))
+    # Odebranie komunikatu z serwera
     res = client.recv(1024)
+    # Dekodowanie komunikatu
     res = res.decode("utf-8")
+    # Podzielenie odebranego komunikatu na tablicę w której każdy element jest jednym polem
     res = res.split("$")
     if len(res) == 6 and res[0][3:] != "historia":
+        # Wypisanie wyniku operacji
         handleOpResult(res)
     else:
+        # Wypisanie historii jeśli operacją jest historia
         historia(res)
 
     input()
