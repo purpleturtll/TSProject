@@ -23,7 +23,7 @@ import time
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-#client.connect(("192.168.137.1", 8080))
+# client.connect(("192.168.137.1", 8080))
 client.connect(("127.0.0.1", 8080))
 
 client.setblocking(True)
@@ -214,7 +214,7 @@ def dane(operacja, a1, a2):
 
 
 def operWBezokoliczniku(res):
-    """ Funkcja zmieniająca dane w zmiennej oper na jej odpowiednik w bezokoliczniku, 
+    """ Funkcja zmieniająca dane w zmiennej oper na jej odpowiednik w bezokoliczniku,
     używana podczas wyświetlania historii przez użytkownika"""
     oper = res
     if oper == "poteguj":
@@ -302,7 +302,7 @@ while True:
     # Wczytanie parametrów dla wybranej operacji
     a, b = param(operacja)
     operacja = na_String(operacja)
-    # Przygotowanie komuninkatu do wysłania 
+    # Przygotowanie komuninkatu do wysłania
     msg = dane(operacja, a, b)
     # Zakodowanie znaków w formacie UTF-8 i przesłanie go do serwera
     client.send(msg.encode("utf-8"))
