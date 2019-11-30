@@ -23,8 +23,8 @@ import threading
 import os
 from decimal import Decimal
 
-HOST, PORT = "192.168.137.1", 8080
-# HOST, PORT = "127.0.0.1", 8080
+# HOST, PORT = "192.168.137.1", 8080
+HOST, PORT = "127.0.0.1", 8080
 SOCKETS = {}
 OPERATIONS = {}
 SESSION_ID = 1
@@ -187,31 +187,42 @@ class Handler(socketserver.BaseRequestHandler):
     def historia(self, data):
         """Funkcja obsługująca wysyłanie historii"""
         if len(data) == 5:
+            # Historia po ID sesji
             if len(OPERATIONS[SOCKETS[self.request][0]]) == 0:
+                # Jeśli historia jest pusta wyślij o tym informację do klienta
                 self.request.send(("OP=historia$ST=PUSTA$ID=" + str(SOCKETS[self.request][0]) + "$TS=" +
                                    str(time.time()) + "$").encode("utf-8"))
             for i in range(len(OPERATIONS[SOCKETS[self.request][0]])):
                 if i < len(OPERATIONS[SOCKETS[self.request][0]]) - 1:
+                    # Wysyłaj kolejne rekordy historii ze statusem HIST
                     self.status = "HIST"
                     op = str(OPERATIONS[SOCKETS[self.request][0]].get(
                         i + 1)).split(" ")
                     self.request.send(
                         bytes(self.dane(op[0], op[1], op[2], op[3], op[4], op[5]), "utf-8"))
+                    # Czekaj na potwierdzenie od klienta
                     self.request.recv(1024)
                 else:
+                    # Wyślij ostatni rekord historii ze statusem OK
+                    # ,żeby klient wiedział kiedy zakończyć odbieranie rekordów
                     self.status = "OK"
                     op = str(OPERATIONS[SOCKETS[self.request][0]].get(
                         i + 1)).split(" ")
                     self.request.send(
                         bytes(self.dane(op[0], op[1], op[2], op[3], op[4], op[5]), "utf-8"))
         else:
+            # Historia po ID operacji
             if int(data[4][3:]) in OPERATIONS[SOCKETS[self.request][0]].keys():
+                # Jeśli ID operacji z zapytania klienta znajduje się w tablicy operacji na serwerze
                 self.status = "OK"
+                # Zamień instancje obiektu Operation na wartości oddzielone spacją
                 op = str(OPERATIONS[SOCKETS[self.request][0]]
                          [int(data[4][3:])]).split(" ")
+                # Prześlij odpowiednio przygotowany komunikat z rekordem historii
                 self.request.send(
                     bytes(self.dane(op[0], op[1], op[2], op[3], op[4], op[5]), "utf-8"))
             else:
+                # Wyślij informacje o braku rekordu o podanym ID w historii
                 self.request.send(("OP=historia$ST=PUSTA$ID=" + str(SOCKETS[self.request][0]) + "$TS=" +
                                    str(time.time()) + "$").encode("utf-8"))
 
